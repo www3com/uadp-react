@@ -1,6 +1,6 @@
 // import {stateContainer} from 'uadp-react';
 import SysModel from './model/SysModel';
-import {stateContainer} from 'uadp-react';
+import stateContainer from '../../src/stateMgr/stateContainer';
 import Root from './component/Root';
 let app = new stateContainer();
 

@@ -9,6 +9,16 @@ let ajax = function (param) {
     if (!p.method) p.method = 'get';
     if (!p.success) throw new Error("缺失ajax成功回调函数");
     if (!p.url) throw  new Error("缺失ajax必要参数url");
+    let sourceCallback = p.success;
+    let callback = function (result) {
+        if(!result.success && result.code == 'sessionExpire') {
+            message.info('session过期，请重新登录！', 3);
+        }else {
+            sourceCallback(result);
+        }
+    }
+    p.success = callback;
+
     reqwest(p);
 }
 

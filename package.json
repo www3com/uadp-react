@@ -2,16 +2,16 @@
   "name": "uadp-react",
   "description": "uadp component",
   "main": "lib/index.js",
-  "version": "1.4.4",
+  "version": "1.4.9",
   "repository": {
     "type": "git",
-    "url": "https://git.oschina.net/wangjzd/uadp-react"
+    "url": "https://github.com/www3com/uadp-react"
   },
   "license": "MIT",
   "bugs": {
-    "url": "https://git.oschina.net/wangjzd/uadp-react"
+    "url": "https://github.com/www3com/uadp-react"
   },
-  "homepage": "https://git.oschina.net/wangjzd/uadp-react",
+  "homepage": "https://github.com/www3com/uadp-react.git",
   "author": "jason <wjzchina2008@126.com>",
   "keywords": [
     "react",
@@ -21,6 +21,7 @@
     "es6"
   ],
   "dependencies": {
+    "antd": "^2.13.6",
     "babel-plugin-import": "^1.0.1",
     "classnames": "^2.2.5",
     "dva": "^1.0.0",

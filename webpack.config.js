@@ -1,10 +1,15 @@
 const webpack = require('atool-build/lib/webpack');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var fs = require('fs-extra');
 var join = require("path").join;
 var path = require('path');
 var glob = require('glob');
 
 module.exports = function(webpackConfig, env) {
+    //清空输出目录
+    fs.emptyDirSync('./dist');
+
     webpackConfig.babel.plugins.push('transform-runtime');
 
     webpackConfig.babel.plugins.push(['import', {
@@ -28,50 +33,60 @@ module.exports = function(webpackConfig, env) {
     webpackConfig.entry = getEntry('test/**/index.jsx');
 
     // Don't extract common.js and common.css
-    webpackConfig.plugins = webpackConfig.plugins.filter(function(plugin) {
-        return !(plugin instanceof webpack.optimize.CommonsChunkPlugin);
+    /*webpackConfig.plugins = webpackConfig.plugins.filter(function(plugin) {
+      return !(plugin instanceof webpack.optimize.CommonsChunkPlugin);
+    });*/
+
+    webpackConfig.plugins.some(function(plugin, i){
+        if(plugin instanceof webpack.optimize.CommonsChunkPlugin) {
+            webpackConfig.plugins.splice(i, 1, new webpack.optimize.CommonsChunkPlugin({
+                name: 'upm/common',
+                filename: 'upm/common.js',
+                minChunks: 3 // 提取使用5次以上的模块，打包到common里
+            }));
+            return true;
+        }
     });
+
+    /**解决HtmlWebpackPlugin与atool-build内置处理html的loader冲突**/
+    webpackConfig.module.loaders.forEach(function (loader,i) {
+        // var str = JSON.stringify(loader);
+        // if(str.indexOf("file?") != -1){
+        //   webpackConfig.module.loaders.splice(i,1);
+        // }
+        //
+        // if(loader.test.toString() == '/\.js$/') {
+        //   webpackConfig.module.loaders.splice(i,1);
+        // }
+        // atool-build 0.9版本需要采用这种方式
+        if(loader.test.toString() === '/\\.html?$/'){
+            loader.loader = 'html';
+        }
+        // less 文件中的图片打包处理
+        // if (loader.test.toString().indexOf('png|jpg|jpeg|gif') > -1) {
+        //   loader.loader = 'url-loader?limit=10&name=images/[name].[ext]';
+        // }
+    });
+
+
+    // var pages = Object.keys(getEntry('test/**/*.html'));
+    // pages.forEach(function(pathname) {
+    //     var conf = {
+    //         filename: pathname + '.html', //生成的html存放路径，相对于path
+    //         template: 'test/' + pathname + '.html', //html模板路径
+    //         inject: false,	//js插入的位置，true/'head'/'body'/false
+    //     };
+    //
+    //
+    //     webpackConfig.plugins.push(new HtmlWebpackPlugin(conf));
+    // });
 
     webpackConfig.plugins.push(
         new CopyWebpackPlugin([
-            { context: './test', from: '**/*.html', to: '' },
-            { context: './test', from: '**/*.png', to: '' },
-            { context: './test', from: '**/*.jpg', to: '' }
+            { context: './test', from: '**/*.png', to: __dirname + '/dist' },
+            { context: './test', from: '**/*.jpg', to: __dirname + '/dist' }
         ])
     );
-    /**解决HtmlWebpackPlugin与atool-build内置处理html的loader冲突**/
-    webpackConfig.module.loaders.forEach(function (e,i) {
-        var str = JSON.stringify(e);
-        if(str.indexOf("file?") != -1){
-            webpackConfig.module.loaders.splice(i,1);
-        }
-
-        if(e.test.toString() == '/\.js$/') {
-            webpackConfig.module.loaders.splice(i,1);
-        }
-    });
-
-
-    // Support CSS Modules
-    // Parse all less files as css module.
-  /*webpackConfig.module.loaders.forEach(function(loader, index) {
-   if (typeof loader.test === 'function' && loader.test.toString().indexOf('\\.less$') > -1) {
-   loader.include = /node_modules/;
-   loader.test = /\.less$/;
-   }
-   if (loader.test.toString() === '/\\.module\\.less$/') {
-   loader.exclude = /node_modules/;
-   loader.test = /\.less$/;
-   }
-   if (typeof loader.test === 'function' && loader.test.toString().indexOf('\\.css$') > -1) {
-   loader.include = /node_modules/;
-   loader.test = /\.css$/;
-   }
-   if (loader.test.toString() === '/\\.module\\.css$/') {
-   loader.exclude = /node_modules/;
-   loader.test = /\.css$/;
-   }
-   });*/
 
     return webpackConfig;
 };
@@ -86,6 +101,7 @@ function getEntry(globPath) {
         basename = path.basename(entry, extname);
         pathname = path.join(dirname, basename);
         pathname = pathname.substr(4);
+        pathname = pathname.replace(/\\/g, '/');
         //pathname = pathname.replace('\\', '/');
         entries[pathname] = ['./' + entry];
     }

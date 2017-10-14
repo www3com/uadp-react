@@ -1,4 +1,4 @@
-import {request} from 'uadp-react';
+import {request} from '../../../src/request';
 import {Modal,message} from 'antd';
 const confirm = Modal.confirm;
 
