@@ -11,8 +11,8 @@ let ajax = function (param) {
     if (!p.url) throw  new Error("缺失ajax必要参数url");
     let sourceCallback = p.success;
     let callback = function (result) {
-        if(!result.success && result.code == 'sessionExpire') {
-            message.info('session过期，请重新登录！', 3);
+        if(!result.success && (result.code == '10000' || result.code == '500')) {
+            message.info(result.msg, 3);
         }else {
             sourceCallback(result);
         }

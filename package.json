@@ -2,7 +2,7 @@
   "name": "uadp-react",
   "description": "uadp component",
   "main": "lib/index.js",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "repository": {
     "type": "git",
     "url": "https://github.com/www3com/uadp-react"
