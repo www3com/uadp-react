@@ -1,5 +1,5 @@
 import * as service from '../service/Service';
-
+import assign from 'object-assign';
 export default {
   namespace:'user',
   state: {
@@ -14,13 +14,13 @@ export default {
     /*打开系统弹出窗口*/
     openSysModal: function (state, params, putState) {
       let sysModalProps = state.sysModalProps;
-      Object.assign(sysModalProps, params);
+      assign(sysModalProps, params);
       return {sysModalProps};
     },
     /*关闭系统弹出窗口*/
     closeSysModal: function (state, params, putState) {
       let sysModalProps = state.sysModalProps;
-      Object.assign(sysModalProps, {visible: false});
+      assign(sysModalProps, {visible: false});
       return {sysModalProps};
     },
     /*查询系统列表*/

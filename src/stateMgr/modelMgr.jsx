@@ -2,7 +2,7 @@
  * Created by wangjz on 2017/6/22.
  */
 import map from '../map';
-
+import assign from 'object-assign';
 const put = map.put;
 const get = map.get;
 
@@ -53,7 +53,7 @@ export function dispatch(that, action) {
 	let state = getState();
 	let reducer = getReducer(action.type);
 	var put = function (res) {
-		Object.assign(state, res);
+		assign(state, res);
 		setState(state);
 		if (get('_debug')) {
 			console.log("状态发生变化，命名空间：" + get('storageName') + ",内容:", state);

@@ -1,5 +1,6 @@
 import {request} from '../../../src/request';
 import {Modal,message} from 'antd';
+import assign from 'object-assign';
 const confirm = Modal.confirm;
 
 /**
@@ -16,10 +17,10 @@ export function querySys(params, putState) {
  */
 export function addSys(state, params, putState, dispatch) {
   let sysModalProps = state.sysModalProps;
-  Object.assign(sysModalProps, {loading: true});
+  assign(sysModalProps, {loading: true});
   putState(sysModalProps);
   request.post('addSys.do', params, function() {
-    Object.assign(sysModalProps, {loading: false, visible: false});
+    assign(sysModalProps, {loading: false, visible: false});
     putState(sysModalProps);
     dispatch('querySys', {name:''});
   });
@@ -30,14 +31,14 @@ export function addSys(state, params, putState, dispatch) {
  */
 export function editSys(state, params, putState, dispatch) {
   let sysModalProps = state.sysModalProps;
-  Object.assign(sysModalProps, {loading: true});
+  assign(sysModalProps, {loading: true});
   putState(sysModalProps);
   request.post('updateSys.do', values, function() {
-    Object.assign(sysModalProps, {loading: false, visible: false});
+    assign(sysModalProps, {loading: false, visible: false});
     putState(sysModalProps);
     dispatch('querySys', {name:''});
   },function (err) {
-    Object.assign(sysModalProps, {loading: false});
+    assign(sysModalProps, {loading: false});
     putState(sysModalProps);
   });
 }
